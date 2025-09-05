@@ -27,7 +27,7 @@
       {
         id = "android";
         label = "Android";
-        command = ["/usr/bin/google-android-emulator-11.0/emulator" "-avd" "generic_11" "-no-snapshot"];
+        command = ["emulator" "-avd" "generic_34" "-no-snapshot" "-no-boot-anim"];
       }
     ];
   };
@@ -35,13 +35,7 @@
   # The following options are read and used by the IDX editor.
   # For more information, see: https://developers.google.com/idx/guides/customize-idx-env#idx_options
   idx.workspace.onCreate = {
-    # A list of commands that are run in the workspace terminal when the workspace is created.
-    # For example, you might want to run `npm install` or `pnpm install` here.
-    #
-    # Examples:
-    # default = "pnpm install";
-    # default = [ "pnpm install" "pnpm run build" ];
-    android-sdk-install = ''
+    android-sdk-install = '''
       # We need to add the Android SDK and command-line tools to the PATH.
       # First, we download the command-line tools.
       mkdir -p ~/android/cmdline-tools
@@ -54,6 +48,7 @@
       echo "export ANDROID_HOME=$HOME/android" >> ~/.bashrc
       echo "export PATH=$PATH:$HOME/android/cmdline-tools/latest/bin" >> ~/.bashrc
       echo "export PATH=$PATH:$HOME/android/platform-tools" >> ~/.bashrc
+      echo "export PATH=$PATH:$HOME/android/emulator" >> ~/.bashrc
       source ~/.bashrc
 
       # We need to accept the licenses before we can use the SDK.
@@ -71,16 +66,11 @@
       sdkmanager "emulator"
 
       # We can now create an Android Virtual Device (AVD).
-      avdmanager create avd -n generic_11 -k "system-images;android-34;google_apis;x86_64" -d "pixel"
-    '';
+      avdmanager create avd -n generic_34 -k "system-images;android-34;google_apis;x86_64" -d "pixel"
+    ''';
   };
   idx.workspace.onStart = {
     # A list of commands that are run in the workspace terminal when the workspace is started.
-    # For example, you might want to run `npm run dev` or `pnpm run dev` here.
-    #
-    # Examples:
-    # default = "pnpm run dev";
-    # default = [ "pnpm run dev" "pnpm run test" ];
-    flutter-dev = "flutter doctor && flutter pub get && flutter run -d android";
+    flutter-dev = "flutter doctor && flutter pub get";
   };
 }
